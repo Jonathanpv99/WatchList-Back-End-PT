@@ -54,6 +54,52 @@ class EventService {
       throw error;
     }
   }
+  
+  static async createMany(
+    dataArray: Array<{
+      message: string;
+      summary?: string;
+      severity?: string;
+      suggestion?: string;
+      watchlistId: string;
+    }>,
+    options = {}
+  ) {
+    const correlationId = options.req?.correlationId;
+
+    try {
+      logger.info(
+        {
+          correlationId,
+          operation: "createMany",
+          service: "EventService",
+          count: dataArray.length
+        },
+        "Creating multiple events"
+      );
+
+      const events = await EventRepository.createMany(dataArray, correlationId);
+
+      logger.info(
+        { correlationId, count: events.length },
+        "Multiple events created in service"
+      );
+
+      return events;
+    } catch (error) {
+      logger.error(
+        {
+          correlationId,
+          error: error.message,
+          stack: error.stack,
+          operation: "createMany",
+          service: "EventService"
+        },
+        "Error creating multiple events"
+      );
+      throw error;
+    }
+  }
 
   static async getAll(options = {}) {
     const correlationId = options.req?.correlationId;
