@@ -3,7 +3,6 @@ import { PrismaClient } from "@prisma/client";
 export default class WatchListRepository {
   static prisma = new PrismaClient();
 
-  // Método unificado que siempre usa transacción
   static async create(data: {
     name: string;
     terms: string[];
@@ -24,5 +23,23 @@ export default class WatchListRepository {
         throw error;
       }
     });
+  }
+
+  static async getById(id: string) {
+    try {
+      const watchlist = await this.prisma.watchlist.findUnique({
+        where: {
+          id: id,
+        },
+      });
+
+      if (!watchlist) {
+        throw new Error("Watchlist not found");
+      }
+
+      return watchlist;
+    } catch (error) {
+      throw error;
+    }
   }
 }
