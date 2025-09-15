@@ -48,6 +48,9 @@ app.use(helmet());
 // Configure the Entity routes
 const routes = express.Router();
 
+require("./watchList").default(routes);
+require("./events").default(routes);
+
 // Add the routes to the /api endpoint
 app.use("/api", routes);
 
