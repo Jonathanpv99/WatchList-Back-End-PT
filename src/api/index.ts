@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import apiRateLimiter from "./apiRateLimiter";
+import { correlationId } from "../middlewares/correlationId";
 
 const app = express();
 
@@ -31,6 +32,9 @@ app.use(
 );
 
 app.use(express.json());
+
+//correlationId middleware
+app.use(correlationId);
 
 // Default rate limiter
 app.use(apiRateLimiter);
