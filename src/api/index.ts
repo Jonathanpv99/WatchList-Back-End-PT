@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import apiRateLimiter from "./apiRateLimiter";
 import { correlationId } from "../middlewares/correlationId";
+import { authMiddleware } from "../middlewares/authMiddleware";
 
 const app = express();
 
@@ -32,6 +33,9 @@ app.use(
 );
 
 app.use(express.json());
+
+//auth middleware
+app.use(authMiddleware);
 
 //correlationId middleware
 app.use(correlationId);
