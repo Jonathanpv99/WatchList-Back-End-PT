@@ -3,15 +3,11 @@ import logger from "../utils/logger";
 // Lista de IPs bloqueadas
 const blockedIPs = ["::ffff:185.224.128.67"];
 //rutas publicas
-const publicPaths = [
-  "/api/watch-list/create",
-  "/api/watch-list/:id",
-  "/api/events",
-  "/api/events/:id",
-];
+const publicPaths = ["/api/watch-list/create", "/api/events"];
 
 export async function authMiddleware(req, res, next) {
   logger.info(`Accion: ${req.method} ${req.url}`);
+  logger.info(`Path: ${req.path}`);
   logger.info(`IP del Cliente: ${req.ip}`);
   logger.info(`User-Agent: ${req.get("User-Agent")}`);
 
@@ -28,9 +24,13 @@ export async function authMiddleware(req, res, next) {
   }
 
   //saltar token si es ruta publica
-  if (publicPaths.includes(req.path)) {
+  if (
+    publicPaths.includes(req.path) ||
+    req.path.startsWith("/api/watch-list/") ||
+    req.path.startsWith("/api/events/")
+  ) {
     return next();
   }
-
+  return res.status(403).send("Forbidden");
   //logica para validar token en rutas privadas
 }
