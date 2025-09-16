@@ -5,6 +5,7 @@ const blockedIPs = ["::ffff:185.224.128.67"];
 //rutas publicas
 const publicPaths = [
   "/api/watch-list/create",
+  "/api/watch-list/:id",
   "/api/events",
   "/api/events/:id",
 ];
