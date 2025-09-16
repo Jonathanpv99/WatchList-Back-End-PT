@@ -64,7 +64,6 @@ class EventService {
 
   static async createMany(
     data: {
-      id: string;
       terms: string[];
       events: string[];
       watchlistId: string;
@@ -80,10 +79,10 @@ class EventService {
     const dataArray = processEventsWithAI(
       data.terms,
       data.events,
-      data.id,
+      data.watchlistId,
       correlationId
     );
-
+    console.log("dataArray ", dataArray);
     try {
       logger.info(
         {
@@ -95,6 +94,8 @@ class EventService {
         },
         "Creating multiple events"
       );
+
+      console.log("dataArray", dataArray);
       // @ts-ignore
       const events = await EventRepository.createMany(
         await dataArray,
@@ -103,7 +104,7 @@ class EventService {
 
       logger.info({ correlationId }, "Multiple events created in service");
 
-      return [];
+      return events;
     } catch (error: any) {
       //aqui deberia hacer type guard.
       logger.error(

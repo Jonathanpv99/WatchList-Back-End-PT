@@ -25,7 +25,7 @@ export default async (req, res) => {
     );
 
     await ApiResponseHandler.success(req, res, { watchlist });
-  } catch (error) {
+  } catch (error: any) {
     logger.error(
       {
         correlationId,

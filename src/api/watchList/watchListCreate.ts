@@ -19,7 +19,15 @@ export default async (req, res) => {
       "Watchlist created successfully"
     );
 
-    const payload = WatchListService.create(req.body, { req });
+    //crear los eventos analizados por ia
+    const payload = EventService.createMany(
+      {
+        terms: record.terms,
+        events: record.events,
+        watchlistId: record.id,
+      },
+      { req }
+    );
 
     await ApiResponseHandler.success(req, res, { watchlist: payload });
   } catch (error) {
