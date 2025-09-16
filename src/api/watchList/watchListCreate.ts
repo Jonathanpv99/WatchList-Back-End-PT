@@ -1,4 +1,5 @@
 import WatchListService from "../../services/watchList/watchListService";
+import EventService from "../../services/events/eventService";
 import ApiResponseHandler from "../apiResponseHandler";
 import logger from "../../utils/logger";
 
@@ -11,7 +12,6 @@ export default async (req, res) => {
       "Creating watchlist"
     );
 
-    // Usar el método estático para crear el watchlist
     const record = await WatchListService.create(req.body, { req });
 
     logger.info(
@@ -19,10 +19,16 @@ export default async (req, res) => {
       "Watchlist created successfully"
     );
 
-    await ApiResponseHandler.success(req, res, { watchlist: record });
+    const payload = WatchListService.create(req.body, { req });
+
+    await ApiResponseHandler.success(req, res, { watchlist: payload });
   } catch (error) {
     logger.error(
-      { correlationId, error: error.message, stack: error.stack },
+      {
+        correlationId,
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      },
       "Error creating watchlist"
     );
     await ApiResponseHandler.error(req, res, error);

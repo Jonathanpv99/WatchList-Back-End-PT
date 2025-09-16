@@ -11,7 +11,11 @@ class WatchListService {
   // Método unificado que maneja tanto instancia como estático
   static async create(
     data: { name: string; terms: string[]; events: string[] },
-    options = {}
+    options = {
+      req: {
+        correlationId: "",
+      },
+    }
   ) {
     const correlationId = options.req?.correlationId;
 
@@ -30,7 +34,8 @@ class WatchListService {
       );
 
       return watchlist;
-    } catch (error) {
+    } catch (error: any) {
+      //aqui deberia hacer type guard.
       logger.error(
         {
           correlationId,
@@ -45,7 +50,14 @@ class WatchListService {
     }
   }
 
-  static async getById(id: string, options = {}) {
+  static async getById(
+    id: string,
+    options = {
+      req: {
+        correlationId: "",
+      },
+    }
+  ) {
     const correlationId = options.req?.correlationId;
 
     try {
@@ -67,7 +79,8 @@ class WatchListService {
       );
 
       return watchlist;
-    } catch (error) {
+    } catch (error: any) {
+      //aqui deberia hacer type guard.
       logger.error(
         {
           correlationId,

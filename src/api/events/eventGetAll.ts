@@ -19,7 +19,7 @@ export default async (req, res) => {
     );
 
     await ApiResponseHandler.success(req, res, { events });
-  } catch (error) {
+  } catch (error: any) {
     logger.error(
       { correlationId, error: error.message, stack: error.stack },
       "Error retrieving events"

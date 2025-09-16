@@ -22,7 +22,7 @@ export default async (req, res) => {
     logger.info({ correlationId, eventId: id }, "Event retrieved successfully");
 
     await ApiResponseHandler.success(req, res, { event });
-  } catch (error) {
+  } catch (error: any) {
     logger.error(
       { correlationId, eventId: id, error: error.message, stack: error.stack },
       "Error retrieving event"

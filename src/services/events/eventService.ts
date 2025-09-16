@@ -1,5 +1,7 @@
 import EventRepository from "../../repositories/events/eventRepository";
 import logger from "../../utils/logger";
+import { processEventsWithAI } from "./utils/eventsUtils";
+import { Severity } from "../../generated/prisma";
 
 class EventService {
   options;
@@ -12,11 +14,15 @@ class EventService {
     data: {
       message: string;
       summary?: string;
-      severity?: string;
+      severity?: Severity;
       suggestion?: string;
       watchlistId: string;
     },
-    options = {}
+    options = {
+      req: {
+        correlationId: "",
+      },
+    }
   ) {
     const correlationId = options.req?.correlationId;
 
@@ -39,7 +45,8 @@ class EventService {
       );
 
       return event;
-    } catch (error) {
+    } catch (error: any) {
+      //aqui deberia hacer type guard.
       logger.error(
         {
           correlationId,
@@ -54,18 +61,28 @@ class EventService {
       throw error;
     }
   }
-  
+
   static async createMany(
-    dataArray: Array<{
-      message: string;
-      summary?: string;
-      severity?: string;
-      suggestion?: string;
+    data: {
+      id: string;
+      terms: string[];
+      events: string[];
       watchlistId: string;
-    }>,
-    options = {}
+    },
+    options = {
+      req: {
+        correlationId: "",
+      },
+    }
   ) {
     const correlationId = options.req?.correlationId;
+
+    const dataArray = processEventsWithAI(
+      data.terms,
+      data.events,
+      data.id,
+      correlationId
+    );
 
     try {
       logger.info(
@@ -73,27 +90,29 @@ class EventService {
           correlationId,
           operation: "createMany",
           service: "EventService",
-          count: dataArray.length
+          //@ts-ignore
+          count: dataArray?.length,
         },
         "Creating multiple events"
       );
-
-      const events = await EventRepository.createMany(dataArray, correlationId);
-
-      logger.info(
-        { correlationId, count: events.length },
-        "Multiple events created in service"
+      // @ts-ignore
+      const events = await EventRepository.createMany(
+        await dataArray,
+        correlationId
       );
 
-      return events;
-    } catch (error) {
+      logger.info({ correlationId }, "Multiple events created in service");
+
+      return [];
+    } catch (error: any) {
+      //aqui deberia hacer type guard.
       logger.error(
         {
           correlationId,
           error: error.message,
           stack: error.stack,
           operation: "createMany",
-          service: "EventService"
+          service: "EventService",
         },
         "Error creating multiple events"
       );
@@ -101,7 +120,13 @@ class EventService {
     }
   }
 
-  static async getAll(options = {}) {
+  static async getAll(
+    options = {
+      req: {
+        correlationId: "",
+      },
+    }
+  ) {
     const correlationId = options.req?.correlationId;
 
     try {
@@ -118,7 +143,8 @@ class EventService {
       );
 
       return events;
-    } catch (error) {
+    } catch (error: any) {
+      //aqui deberia hacer type guard.
       logger.error(
         {
           correlationId,
@@ -133,7 +159,14 @@ class EventService {
     }
   }
 
-  static async getById(id: string, options = {}) {
+  static async getById(
+    id: string,
+    options = {
+      req: {
+        correlationId: "",
+      },
+    }
+  ) {
     const correlationId = options.req?.correlationId;
 
     try {
@@ -152,7 +185,9 @@ class EventService {
       logger.info({ correlationId, eventId: id }, "Event retrieved in service");
 
       return event;
-    } catch (error) {
+    } catch (error: any) {
+      //aqui deberia hacer type guard.
+
       logger.error(
         {
           correlationId,
