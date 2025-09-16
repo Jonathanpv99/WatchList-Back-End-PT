@@ -13,7 +13,7 @@ model Watchlist {
   name      String
   terms     String[]
   createdAt DateTime @default(now())
-  events    Event[]
+  events    String[]
 }
 
 model Event {
@@ -23,8 +23,7 @@ model Event {
   severity    Severity?
   suggestion  String?
   createdAt   DateTime   @default(now())
-  watchlistId String
-  watchlist   Watchlist  @relation(fields: [watchlistId], references: [id])
+  watchlistId String     // solo referencia al Watchlist
 
   @@index([watchlistId])
   @@index([createdAt])
