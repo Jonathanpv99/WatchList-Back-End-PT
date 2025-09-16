@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import apiRateLimiter from "./apiRateLimiter";
+import { correlationId } from "../middlewares/correlationId";
+import { authMiddleware } from "../middlewares/authMiddleware";
 
 const app = express();
 
@@ -32,6 +34,12 @@ app.use(
 
 app.use(express.json());
 
+//auth middleware
+app.use(authMiddleware);
+
+//correlationId middleware
+app.use(correlationId);
+
 // Default rate limiter
 app.use(apiRateLimiter);
 
@@ -39,6 +47,9 @@ app.use(helmet());
 
 // Configure the Entity routes
 const routes = express.Router();
+
+require("./watchList").default(routes);
+require("./events").default(routes);
 
 // Add the routes to the /api endpoint
 app.use("/api", routes);
