@@ -3,16 +3,20 @@ import logger from "../utils/logger";
 // Lista de IPs bloqueadas
 const blockedIPs = ["::ffff:185.224.128.67"];
 //rutas publicas
-const publicPaths = ["/api/auth/sign-in"];
+const publicPaths = [
+  "/api/watch-list/create",
+  "/api/events",
+  "/api/events/:id",
+];
 
 export async function authMiddleware(req, res, next) {
-  logger.info(`Acción: ${req.method} ${req.url}`);
+  logger.info(`Accion: ${req.method} ${req.url}`);
   logger.info(`IP del Cliente: ${req.ip}`);
   logger.info(`User-Agent: ${req.get("User-Agent")}`);
 
   // Bloquear rutas sospechosas
   if (req.url.startsWith("/GponForm/") || req.url.startsWith("/goform/")) {
-    logger.error("Petición bloqueada: /GponForm/ o /goform/");
+    logger.error("Peticion bloqueada: /GponForm/ o /goform/");
     return res.status(400).send("Bad Request");
   }
 
