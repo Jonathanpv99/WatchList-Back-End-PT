@@ -7,7 +7,10 @@ import { authMiddleware } from "../middlewares/authMiddleware";
 
 const app = express();
 
-const allowedOrigins = ["*"];
+const allowedOrigins = [
+  "https://watch-list-front-end-pt.vercel.app/listas",
+  "http://localhost:3000",
+];
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
